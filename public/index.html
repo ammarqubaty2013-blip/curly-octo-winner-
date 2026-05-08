@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Construction ERP</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">ERP المقاولات</div>
+    <a class="active">لوحة التحكم</a>
+    <a>المشاريع</a>
+    <a>الكميات BOQ</a>
+    <a>المناقصات والعقود</a>
+    <a>المستخلصات</a>
+    <a>الموردين والمخزون</a>
+    <a>المعدات والموظفين</a>
+    <a>التقارير المالية</a>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h1>نظام ERP مقاولات احترافي</h1>
+        <p>إدارة المشاريع، الكميات، المالية، المستخلصات، المخزون، المعدات، والمؤشرات.</p>
+      </div>
+      <div class="login-box">
+        <input id="email" value="admin@erp.local" placeholder="البريد" />
+        <input id="password" value="admin123" type="password" placeholder="كلمة المرور" />
+        <button onclick="login()">دخول</button>
+      </div>
+    </header>
+
+    <section id="kpis" class="kpis"></section>
+
+    <section class="grid">
+      <div class="panel wide">
+        <h2>التدفق النقدي</h2>
+        <div id="cashFlowBars" class="bars"></div>
+      </div>
+      <div class="panel">
+        <h2>ملخص الربحية</h2>
+        <div id="profitBox" class="profit-box"></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2>المشاريع</h2>
+        <button onclick="createProject()">إضافة مشروع تجريبي</button>
+      </div>
+      <table>
+        <thead><tr><th>المشروع</th><th>العميل</th><th>قيمة العقد</th><th>الإنجاز</th><th>الحالة</th></tr></thead>
+        <tbody id="projectsTable"></tbody>
+      </table>
+    </section>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>
