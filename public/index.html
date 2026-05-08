@@ -3,7 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#14213d" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="ERP مقاولات" />
   <title>Construction ERP</title>
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="icon" href="/icons/icon.svg" />
   <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
@@ -29,6 +35,7 @@
         <input id="email" value="admin@erp.local" placeholder="البريد" />
         <input id="password" value="admin123" type="password" placeholder="كلمة المرور" />
         <button onclick="login()">دخول</button>
+        <button id="installBtn" class="secondary" hidden>تثبيت التطبيق</button>
       </div>
     </header>
 
