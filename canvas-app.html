@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ERP المقاولات - Canvas App</title>
+  <style>
+    :root{
+      --bg:#f3f6fb;--dark:#111827;--nav:#14213d;--card:#fff;--line:#e5e7eb;
+      --green:#0f766e;--blue:#2563eb;--gold:#c99700;--red:#dc2626;--muted:#6b7280;
+    }
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Tahoma,Arial,sans-serif;color:var(--dark)}
+    .app{display:grid;grid-template-columns:270px 1fr;min-height:100vh}.side{background:linear-gradient(180deg,#111827,#14213d);color:white;padding:24px 18px;position:sticky;top:0;height:100vh}.brand{display:flex;gap:12px;align-items:center;margin-bottom:26px}.logo{width:52px;height:52px;border-radius:18px;background:linear-gradient(135deg,var(--gold),#facc15);color:#111827;display:grid;place-items:center;font-weight:900}.brand h1{font-size:19px;margin:0}.brand p{margin:4px 0 0;color:#d1d5db;font-size:12px}.nav button{width:100%;text-align:right;border:0;background:transparent;color:#d1d5db;padding:13px 14px;margin:5px 0;border-radius:14px;cursor:pointer;font:inherit}.nav button.active,.nav button:hover{background:rgba(255,255,255,.12);color:white}.main{padding:26px}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:20px}.top h2{margin:0;font-size:30px}.top p{margin:8px 0 0;color:var(--muted)}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:0;border-radius:13px;padding:11px 15px;cursor:pointer;font-weight:700;background:var(--green);color:white}.btn.blue{background:var(--blue)}.btn.gold{background:var(--gold);color:#111827}.btn.light{background:white;color:var(--dark);border:1px solid var(--line)}.kpis{display:grid;grid-template-columns:repeat(4,minmax(160px,1fr));gap:14px;margin-bottom:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:24px;box-shadow:0 10px 28px rgba(15,23,42,.07);padding:18px}.kpi span{color:var(--muted);font-size:13px}.kpi strong{display:block;font-size:28px;margin-top:9px}.grid{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:18px}.panel h3{margin:0 0 14px}.barwrap{height:220px;display:flex;align-items:end;gap:10px;border-bottom:1px solid var(--line);padding-top:20px}.bar{flex:1;border-radius:12px 12px 0 0;background:linear-gradient(180deg,#0f766e,#99f6e4);min-height:12px;position:relative}.bar.exp{background:linear-gradient(180deg,#dc2626,#fecaca)}.bar small{position:absolute;bottom:-28px;right:0;left:0;text-align:center;color:var(--muted);font-size:11px}.progress{height:10px;background:#e5e7eb;border-radius:99px;overflow:hidden}.progress i{display:block;height:100%;background:var(--green)}table{width:100%;border-collapse:collapse}th,td{padding:13px;border-bottom:1px solid var(--line);text-align:right}th{color:#374151;background:#f9fafb}.badge{border-radius:99px;padding:6px 10px;font-size:12px;background:#dcfce7;color:#166534}.badge.delay{background:#fee2e2;color:#991b1b}.form{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:12px 0}.form input,.form select{border:1px solid var(--line);border-radius:12px;padding:11px;font:inherit}.hide{display:none}.module-title{display:flex;justify-content:space-between;gap:10px;align-items:center}.list{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.mini{border:1px solid var(--line);border-radius:18px;padding:15px;background:#fff}.mini strong{display:block;margin-bottom:8px}.toast{position:fixed;left:20px;bottom:20px;background:#111827;color:white;padding:14px 16px;border-radius:14px;box-shadow:0 10px 24px rgba(0,0,0,.2);display:none}@media(max-width:950px){.app{grid-template-columns:1fr}.side{position:relative;height:auto}.kpis,.grid,.list,.form{grid-template-columns:1fr}.top{flex-direction:column;align-items:stretch}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><div class="logo">ERP</div><div><h1>ERP المقاولات</h1><p>Canvas Demo</p></div></div>
+    <div class="nav" id="nav">
+      <button class="active" data-page="dashboard">لوحة التحكم</button>
+      <button data-page="projects">إدارة المشاريع</button>
+      <button data-page="boq">الكميات BOQ</button>
+      <button data-page="finance">المالية و P&L</button>
+      <button data-page="inventory">الموردين والمخزون</button>
+      <button data-page="reports">التقارير</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <section class="top">
+      <div><h2 id="pageTitle">لوحة التحكم</h2><p>نظام تجريبي كامل يعمل داخل الكانفاس بدون خادم.</p></div>
+      <div class="actions">
+        <button class="btn" onclick="seedData()">توليد بيانات</button>
+        <button class="btn blue" onclick="exportJson()">تصدير JSON</button>
+        <button class="btn gold" onclick="print()">طباعة / PDF</button>
+      </div>
+    </section>
+
+    <section id="dashboard" class="page">
+      <div class="kpis" id="kpis"></div>
+      <div class="grid">
+        <div class="card panel"><h3>Cash Flow</h3><div id="cashBars" class="barwrap"></div></div>
+        <div class="card panel"><h3>ملخص الربحية</h3><div id="profitSummary"></div></div>
+      </div>
+      <div class="card panel"><h3>آخر المشاريع</h3><table><thead><tr><th>المشروع</th><th>العميل</th><th>العقد</th><th>الإنجاز</th><th>الحالة</th></tr></thead><tbody id="dashProjects"></tbody></table></div>
+    </section>
+
+    <section id="projects" class="page hide">
+      <div class="card">
+        <div class="module-title"><h3>إضافة مشروع</h3><button class="btn" onclick="addProject()">حفظ المشروع</button></div>
+        <div class="form">
+          <input id="pName" placeholder="اسم المشروع">
+          <input id="pClient" placeholder="العميل">
+          <input id="pValue" type="number" placeholder="قيمة العقد">
+          <input id="pProgress" type="number" placeholder="نسبة الإنجاز">
+          <select id="pStatus"><option value="active">نشط</option><option value="delayed">متأخر</option><option value="completed">مكتمل</option></select>
+        </div>
+      </div>
+      <div class="card" style="margin-top:16px"><h3>قائمة المشاريع</h3><table><thead><tr><th>المشروع</th><th>العميل</th><th>العقد</th><th>الإنجاز</th><th>الحالة</th></tr></thead><tbody id="projectsTable"></tbody></table></div>
+    </section>
+
+    <section id="boq" class="page hide">
+      <div class="card">
+        <div class="module-title"><h3>إضافة بند كميات</h3><button class="btn" onclick="addBoq()">حفظ البند</button></div>
+        <div class="form">
+          <input id="bProject" placeholder="اسم المشروع">
+          <input id="bItem" placeholder="اسم البند">
+          <input id="bUnit" placeholder="الوحدة">
+          <input id="bQty" type="number" placeholder="الكمية">
+          <input id="bCost" type="number" placeholder="سعر الوحدة">
+        </div>
+      </div>
+      <div class="card" style="margin-top:16px"><h3>جدول BOQ</h3><table><thead><tr><th>المشروع</th><th>البند</th><th>الوحدة</th><th>الكمية</th><th>الإجمالي</th></tr></thead><tbody id="boqTable"></tbody></table></div>
+    </section>
+
+    <section id="finance" class="page hide">
+      <div class="card">
+        <div class="module-title"><h3>إضافة حركة مالية</h3><button class="btn" onclick="addLedger()">حفظ الحركة</button></div>
+        <div class="form">
+          <select id="lType"><option value="revenue">إيراد</option><option value="expense">مصروف</option></select>
+          <input id="lDesc" placeholder="الوصف">
+          <input id="lAmount" type="number" placeholder="المبلغ">
+          <input id="lDate" type="date">
+          <select id="lProject"><option>عام</option></select>
+        </div>
+      </div>
+      <div class="grid" style="margin-top:16px"><div class="card"><h3>P&L</h3><div id="pnl"></div></div><div class="card"><h3>المؤشرات</h3><div id="financeKpis"></div></div></div>
+    </section>
+
+    <section id="inventory" class="page hide">
+      <div class="list">
+        <div class="mini"><strong>الموردون</strong><p>خرسانة جاهزة، حديد، معدات، نقل.</p><button class="btn light" onclick="toast('تمت إضافة مورد تجريبي')">إضافة مورد</button></div>
+        <div class="mini"><strong>المخزون</strong><p>مواد خام، كميات متاحة، حد إعادة الطلب.</p><button class="btn light" onclick="toast('تم تحديث المخزون')">تحديث مخزون</button></div>
+        <div class="mini"><strong>أوامر الشراء</strong><p>طلب شراء، موافقة، استلام، فاتورة.</p><button class="btn light" onclick="toast('تم إنشاء أمر شراء')">أمر شراء</button></div>
+      </div>
+    </section>
+
+    <section id="reports" class="page hide">
+      <div class="list">
+        <div class="mini"><strong>BOQ Report</strong><p>تقرير الكميات والتكلفة.</p></div>
+        <div class="mini"><strong>Cash Flow</strong><p>تدفقات مالية حسب الإيرادات والمصروفات.</p></div>
+        <div class="mini"><strong>Project Status</strong><p>نسب إنجاز ومشاريع متأخرة.</p></div>
+      </div>
+    </section>
+  </main>
+</div>
+<div id="toast" class="toast"></div>
+<script>
+const state={projects:[],boq:[],ledger:[]};
+const money=v=>new Intl.NumberFormat('ar-EG',{maximumFractionDigits:0}).format(Number(v||0));
+function seedData(){state.projects=[{name:'مشروع مبنى إداري',client:'شركة تجريبية',value:2500000,progress:42,status:'active'},{name:'مشروع خزانات مياه',client:'جهة حكومية',value:1200000,progress:63,status:'delayed'},{name:'مشروع هناجر ومخازن',client:'مستثمر خاص',value:1800000,progress:25,status:'active'}];state.boq=[{project:'مشروع مبنى إداري',item:'أعمال الحفر',unit:'م3',qty:1200,cost:8},{project:'مشروع مبنى إداري',item:'خرسانة مسلحة',unit:'م3',qty:500,cost:140},{project:'مشروع خزانات مياه',item:'عزل مائي',unit:'م2',qty:900,cost:12}];state.ledger=[{type:'revenue',desc:'دفعة مستخلص',amount:250000,date:'2026-05-01'},{type:'expense',desc:'مواد بناء',amount:95000,date:'2026-05-02'},{type:'expense',desc:'أجور عمالة',amount:42000,date:'2026-05-04'},{type:'revenue',desc:'دفعة عميل',amount:180000,date:'2026-05-06'}];render();toast('تم توليد بيانات تجريبية')}
+function render(){renderKpis();renderProjects();renderBoq();renderFinance();}
+function renderKpis(){let revenue=sum('revenue'),expense=sum('expense'),contract=state.projects.reduce((s,p)=>s+Number(p.value||0),0),avg=Math.round(state.projects.reduce((s,p)=>s+Number(p.progress||0),0)/Math.max(1,state.projects.length));let items=[['إجمالي المشاريع',state.projects.length],['المتأخرة',state.projects.filter(p=>p.status==='delayed').length],['قيمة العقود',money(contract)],['متوسط الإنجاز',avg+'%'],['الإيرادات',money(revenue)],['المصروفات',money(expense)],['صافي الربح',money(revenue-expense)],['هامش الربح',revenue?Math.round((revenue-expense)/revenue*100)+'%':'0%']];document.getElementById('kpis').innerHTML=items.map(i=>`<div class="card kpi"><span>${i[0]}</span><strong>${i[1]}</strong></div>`).join('');renderCashBars();document.getElementById('profitSummary').innerHTML=`<p>الإيرادات: <b>${money(revenue)}</b></p><p>المصروفات: <b>${money(expense)}</b></p><p>صافي الربح: <b>${money(revenue-expense)}</b></p>`}
+function renderCashBars(){let max=Math.max(1,...state.ledger.map(x=>Math.abs(Number(x.amount))));document.getElementById('cashBars').innerHTML=state.ledger.map(x=>`<div class="bar ${x.type==='expense'?'exp':''}" style="height:${Math.max(15,Math.round(Math.abs(x.amount)/max*190))}px"><small>${x.type==='expense'?'مصروف':'إيراد'}</small></div>`).join('')}
+function renderProjects(){let rows=state.projects.map(p=>`<tr><td><b>${p.name}</b></td><td>${p.client}</td><td>${money(p.value)}</td><td><div class="progress"><i style="width:${p.progress}%"></i></div>${p.progress}%</td><td><span class="badge ${p.status==='delayed'?'delay':''}">${labelStatus(p.status)}</span></td></tr>`).join('');document.getElementById('projectsTable').innerHTML=rows;document.getElementById('dashProjects').innerHTML=rows}
+function renderBoq(){document.getElementById('boqTable').innerHTML=state.boq.map(b=>`<tr><td>${b.project}</td><td>${b.item}</td><td>${b.unit}</td><td>${money(b.qty)}</td><td>${money(Number(b.qty)*Number(b.cost))}</td></tr>`).join('')}
+function renderFinance(){let revenue=sum('revenue'),expense=sum('expense'),profit=revenue-expense;document.getElementById('pnl').innerHTML=`<p>Revenue: <b>${money(revenue)}</b></p><p>Expenses: <b>${money(expense)}</b></p><p>Profit: <b>${money(profit)}</b></p>`;document.getElementById('financeKpis').innerHTML=`<p>Profit Margin: <b>${revenue?Math.round(profit/revenue*100):0}%</b></p><p>Transactions: <b>${state.ledger.length}</b></p>`}
+function addProject(){state.projects.unshift({name:v('pName')||'مشروع جديد',client:v('pClient')||'عميل',value:+v('pValue')||0,progress:+v('pProgress')||0,status:v('pStatus')});render();toast('تم حفظ المشروع')}
+function addBoq(){state.boq.unshift({project:v('bProject')||'عام',item:v('bItem')||'بند جديد',unit:v('bUnit')||'وحدة',qty:+v('bQty')||0,cost:+v('bCost')||0});render();toast('تم حفظ بند BOQ')}
+function addLedger(){state.ledger.unshift({type:v('lType'),desc:v('lDesc')||'حركة مالية',amount:+v('lAmount')||0,date:v('lDate')||new Date().toISOString().slice(0,10)});render();toast('تم حفظ الحركة المالية')}
+function sum(type){return state.ledger.filter(x=>x.type===type).reduce((s,x)=>s+Number(x.amount||0),0)}function v(id){return document.getElementById(id).value}function labelStatus(s){return s==='delayed'?'متأخر':s==='completed'?'مكتمل':'نشط'}
+function exportJson(){let data=JSON.stringify(state,null,2);let blob=new Blob([data],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='construction-erp-data.json';a.click();toast('تم تصدير البيانات')}
+function toast(msg){let t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',2200)}
+document.getElementById('nav').addEventListener('click',e=>{if(e.target.tagName!=='BUTTON')return;document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));e.target.classList.add('active');document.querySelectorAll('.page').forEach(p=>p.classList.add('hide'));document.getElementById(e.target.dataset.page).classList.remove('hide');document.getElementById('pageTitle').textContent=e.target.textContent});seedData();
+</script>
+</body>
+</html>
