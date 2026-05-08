@@ -1,0 +1,22 @@
+{
+  "name": "نظام ERP المقاولات",
+  "short_name": "ERP مقاولات",
+  "description": "تطبيق إدارة مشاريع المقاولات والكميات والمالية والمخزون والمعدات.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "dir": "rtl",
+  "lang": "ar",
+  "orientation": "any",
+  "background_color": "#f4f7fb",
+  "theme_color": "#14213d",
+  "categories": ["business", "productivity", "finance"],
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
