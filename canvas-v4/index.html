@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ERP المقاولات V4 Automation</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><div class="logo">ERP</div><div><h1>ERP المقاولات</h1><small>V4 Automation</small></div></div>
+    <div class="nav" id="nav">
+      <button class="active" data-page="dashboard">لوحة التحكم</button>
+      <button data-page="automation">الأتمتة</button>
+      <button data-page="projects">المشاريع</button>
+      <button data-page="boq">BOQ الكميات</button>
+      <button data-page="finance">المالية</button>
+      <button data-page="suppliers">الموردين</button>
+      <button data-page="inventory">المخزون</button>
+      <button data-page="reports">التقارير</button>
+    </div>
+  </aside>
+  <main class="main">
+    <section class="top">
+      <div><h2 id="title">لوحة التحكم</h2><p>ربط تلقائي بين المشروع و BOQ والمالية والموردين والمخزون.</p></div>
+      <div class="actions">
+        <button class="btn" onclick="seedData()">توليد بيانات</button>
+        <button class="btn blue" onclick="exportJson()">تصدير</button>
+        <label class="btn light">استيراد <input type="file" id="importFile" hidden accept="application/json"></label>
+        <button class="btn gold" onclick="window.print()">PDF</button>
+        <button class="btn red" onclick="resetAll()">مسح الكل</button>
+      </div>
+    </section>
+    <section id="dashboard" class="page"><div class="kpis" id="kpis"></div><div class="grid"><div class="card"><h3>Cash Flow</h3><div class="bars" id="bars"></div></div><div class="card"><h3>P&L</h3><div id="profit"></div></div></div><div class="card"><h3>آخر المشاريع</h3><table><thead><tr><th>المشروع</th><th>النوع</th><th>العقد</th><th>BOQ</th><th>المتبقي</th></tr></thead><tbody id="dashRows"></tbody></table></div></section>
+    <section id="automation" class="page hide"><div class="card"><div class="head"><h3>إنشاء مشروع مؤتمت</h3><button class="btn" onclick="autoCreateProject()">توليد وربط كل شيء</button></div><div class="form"><input id="aName" placeholder="اسم المشروع"><input id="aClient" placeholder="العميل"><select id="aType"><option value="building">مباني</option><option value="road">طرق</option><option value="tank">خزانات</option><option value="warehouse">هناجر ومخازن</option><option value="factory">مصانع</option></select><input id="aValue" type="number" placeholder="قيمة العقد"><input id="aArea" type="number" placeholder="المساحة/الطول التقريبي"><input id="aStart" type="date"></div><p class="hint">الأتمتة تولد مشروع + بنود BOQ + مصروفات تقديرية + دفعة إيراد + موردين + مواد مخزون، وكلها مربوطة برقم المشروع.</p></div><div class="grid mt"><div class="card"><h3>آخر ربط تلقائي</h3><div id="automationLog"></div></div><div class="card"><h3>قواعد التوليد</h3><ul><li>BOQ حسب نوع المشروع</li><li>المصروفات من تكلفة BOQ</li><li>الإيراد دفعة مقدمة 20%</li><li>المخزون والموردين حسب البنود</li></ul></div></div></section>
+    <section id="projects" class="page hide"><div class="card"><div class="head"><h3 id="projectFormTitle">إضافة مشروع يدوي</h3><div><button class="btn" onclick="saveProject()">حفظ</button><button class="btn light" onclick="clearProjectForm()">إلغاء</button></div></div><div class="form"><input id="pName" placeholder="اسم المشروع"><input id="pClient" placeholder="العميل"><select id="pType"><option value="building">مباني</option><option value="road">طرق</option><option value="tank">خزانات</option><option value="warehouse">هناجر</option><option value="factory">مصانع</option></select><input id="pValue" type="number" placeholder="قيمة العقد"><input id="pProgress" type="number" placeholder="الإنجاز %"><select id="pStatus"><option value="active">نشط</option><option value="delayed">متأخر</option><option value="completed">مكتمل</option></select></div></div><div class="card mt"><input class="search" id="projectSearch" placeholder="بحث في المشاريع" oninput="renderProjects()"><table><thead><tr><th>المشروع</th><th>النوع</th><th>العميل</th><th>العقد</th><th>BOQ</th><th>إجراء</th></tr></thead><tbody id="projectRows"></tbody></table></div></section>
+    <section id="boq" class="page hide"><div class="card"><input class="search" id="boqSearch" placeholder="بحث في BOQ" oninput="renderBoq()"><table><thead><tr><th>المشروع</th><th>البند</th><th>الوحدة</th><th>الكمية</th><th>سعر الوحدة</th><th>الإجمالي</th><th>إجراء</th></tr></thead><tbody id="boqRows"></tbody></table></div></section>
+    <section id="finance" class="page hide"><div class="card"><input class="search" id="ledgerSearch" placeholder="بحث في الحركات" oninput="renderFinance()"><table><thead><tr><th>النوع</th><th>المشروع</th><th>الوصف</th><th>المبلغ</th><th>التاريخ</th><th>إجراء</th></tr></thead><tbody id="ledgerRows"></tbody></table></div></section>
+    <section id="suppliers" class="page hide"><div class="card"><input class="search" id="supplierSearch" placeholder="بحث في الموردين" oninput="renderSuppliers()"><table><thead><tr><th>المورد</th><th>التصنيف</th><th>الهاتف</th><th>المشروع</th><th>إجراء</th></tr></thead><tbody id="supplierRows"></tbody></table></div></section>
+    <section id="inventory" class="page hide"><div class="card"><input class="search" id="inventorySearch" placeholder="بحث في المخزون" oninput="renderInventory()"><table><thead><tr><th>المادة</th><th>الوحدة</th><th>الكمية</th><th>حد التنبيه</th><th>التكلفة</th><th>المشروع</th><th>إجراء</th></tr></thead><tbody id="inventoryRows"></tbody></table></div></section>
+    <section id="reports" class="page hide"><div class="grid"><div class="card"><h3>ملخص الربط</h3><div id="reportSummary"></div></div><div class="card"><h3>إجراءات</h3><button class="btn blue" onclick="exportJson()">تصدير نسخة احتياطية</button><button class="btn gold" onclick="window.print()">طباعة التقرير</button></div></div></section>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+<script src="app.js"></script>
+</body></html>
