@@ -6,32 +6,33 @@
   <meta name="theme-color" content="#14213d" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="ERP مقاولات" />
-  <title>Construction ERP</title>
+  <meta name="apple-mobile-web-app-title" content="منصة ذكاء المشاريع" />
+  <title>منصة الذكاء الاصطناعي لدراسة المشاريع والمقاولات</title>
   <link rel="manifest" href="/manifest.webmanifest" />
   <link rel="icon" href="/icons/icon.svg" />
   <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
   <aside class="sidebar">
-    <div class="brand">ERP المقاولات</div>
-    <a class="active">لوحة التحكم</a>
-    <a>المشاريع</a>
-    <a>الكميات BOQ</a>
-    <a>المناقصات والعقود</a>
-    <a>المستخلصات</a>
-    <a>الموردين والمخزون</a>
-    <a>المعدات والموظفين</a>
-    <a>التقارير المالية</a>
+    <div class="brand">منصة ذكاء المشاريع</div>
+    <nav id="mainNav">
+      <a href="#/dashboard" data-route="dashboard" class="active">لوحة التحكم</a>
+      <a href="#/new" data-route="new">مشروع جديد بالذكاء الاصطناعي</a>
+      <a href="#/details" data-route="details">تفاصيل المشروع</a>
+      <a href="#/feasibility" data-route="feasibility">دراسة الجدوى</a>
+      <a href="#/costs" data-route="costs">التكاليف ومراكز التكلفة</a>
+      <a href="#/risks" data-route="risks">المخاطر</a>
+      <a href="#/reports" data-route="reports">التقارير والتصدير</a>
+    </nav>
   </aside>
 
   <main class="main">
     <header class="topbar">
       <div>
-        <h1>نظام ERP مقاولات احترافي</h1>
-        <p>إدارة المشاريع، الكميات، المالية، المستخلصات، المخزون، المعدات، والمؤشرات.</p>
+        <h1>منصة الذكاء الاصطناعي لدراسة المشاريع والمقاولات</h1>
+        <p>إدارة وتحليل مشاريع المقاولات، توليد دراسات الجدوى، خطط PMP، التكاليف، المخاطر، والتقارير داخل مشروع واحد.</p>
       </div>
-      <div class="login-box">
+      <div class="login-box" id="loginBox">
         <input id="email" value="admin@erp.local" placeholder="البريد" />
         <input id="password" value="admin123" type="password" placeholder="كلمة المرور" />
         <button onclick="login()">دخول</button>
@@ -39,29 +40,8 @@
       </div>
     </header>
 
-    <section id="kpis" class="kpis"></section>
-
-    <section class="grid">
-      <div class="panel wide">
-        <h2>التدفق النقدي</h2>
-        <div id="cashFlowBars" class="bars"></div>
-      </div>
-      <div class="panel">
-        <h2>ملخص الربحية</h2>
-        <div id="profitBox" class="profit-box"></div>
-      </div>
-    </section>
-
-    <section class="panel">
-      <div class="panel-head">
-        <h2>المشاريع</h2>
-        <button onclick="createProject()">إضافة مشروع تجريبي</button>
-      </div>
-      <table>
-        <thead><tr><th>المشروع</th><th>العميل</th><th>قيمة العقد</th><th>الإنجاز</th><th>الحالة</th></tr></thead>
-        <tbody id="projectsTable"></tbody>
-      </table>
-    </section>
+    <div id="toast" class="toast" hidden></div>
+    <section id="appRoot" class="app-root"></section>
   </main>
   <script src="/app.js"></script>
   <script src="/pwa.js"></script>
