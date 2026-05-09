@@ -1,6 +1,51 @@
 let token = localStorage.getItem('erp_token') || '';
 let dashboardCache = null;
 
+const aiPlatformPlan = {
+  totalTasks: 31,
+  sections: 12,
+  notStarted: 31,
+  urgent: 13,
+  estimatedCost: 145000,
+  urgentTasks: [
+    { title: 'تحديد متطلبات المنصة والميزات الأساسية', dueDate: '2026-05-20' },
+    { title: 'بحث تقنيات الذكاء الاصطناعي المناسبة', dueDate: '2026-05-25' },
+    { title: 'تطوير نموذج الذكاء الاصطناعي لتحليل التكاليف', dueDate: '2026-07-15' },
+  ],
+  features: [
+    'تطوير محرك توليد المشاريع التلقائي',
+    'نظام التكامل بين الوحدات',
+    'توليد التقارير التلقائي',
+    'واجهة ضغطة زر واحدة لإنشاء المشروع بالكامل',
+  ],
+};
+
+function formatDate(value) {
+  return new Intl.DateTimeFormat('ar-EG', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(value));
+}
+
+function renderAiPlatformOverview() {
+  const stats = [
+    ['إجمالي المهام', aiPlatformPlan.totalTasks],
+    ['الأقسام', aiPlatformPlan.sections],
+    ['لم تبدأ', aiPlatformPlan.notStarted],
+    ['مهام عاجلة', aiPlatformPlan.urgent],
+    ['التكلفة المقدرة', money(aiPlatformPlan.estimatedCost)],
+  ];
+
+  document.getElementById('aiProjectStats').innerHTML = stats
+    .map(([label, value]) => `<div class="ai-stat"><span>${label}</span><strong>${value}</strong></div>`)
+    .join('');
+
+  document.getElementById('urgentTasks').innerHTML = aiPlatformPlan.urgentTasks
+    .map((task) => `<li><span>${task.title}</span><strong>استحقاق ${formatDate(task.dueDate)}</strong></li>`)
+    .join('');
+
+  document.getElementById('aiFeatures').innerHTML = aiPlatformPlan.features
+    .map((feature) => `<li>${feature}</li>`)
+    .join('');
+}
+
 async function api(path, options = {}) {
   const response = await fetch(path, {
     ...options,
@@ -94,5 +139,7 @@ async function createProject() {
   });
   await loadDashboard();
 }
+
+renderAiPlatformOverview();
 
 if (token) loadDashboard().catch(() => localStorage.removeItem('erp_token'));
