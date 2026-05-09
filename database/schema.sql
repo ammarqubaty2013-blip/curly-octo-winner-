@@ -19,14 +19,48 @@ CREATE TABLE IF NOT EXISTS projects (
   id SERIAL PRIMARY KEY,
   company_id INTEGER REFERENCES companies(id),
   project_name VARCHAR(220) NOT NULL,
+  project_type VARCHAR(80),
+  location VARCHAR(220),
+  area NUMERIC(14,2) DEFAULT 0,
+  duration VARCHAR(80),
+  status VARCHAR(50) DEFAULT 'active',
+  priority VARCHAR(50) DEFAULT 'medium',
+  total_estimated_cost NUMERIC(14,2) DEFAULT 0,
+  feasibility_summary TEXT,
+  technical_scope TEXT,
+  financial_analysis JSONB DEFAULT '{}'::jsonb,
+  risks JSONB DEFAULT '[]'::jsonb,
+  boq_items JSONB DEFAULT '[]'::jsonb,
+  timeline JSONB DEFAULT '[]'::jsonb,
+  cost_centers JSONB DEFAULT '[]'::jsonb,
+  created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  currency VARCHAR(20) DEFAULT 'ر.س',
+  project_description TEXT,
   client_name VARCHAR(180),
   contract_value NUMERIC(14,2) DEFAULT 0,
   start_date DATE,
   end_date DATE,
   progress NUMERIC(5,2) DEFAULT 0,
-  status VARCHAR(50) DEFAULT 'active',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS project_type VARCHAR(80);
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS location VARCHAR(220);
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS area NUMERIC(14,2) DEFAULT 0;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS duration VARCHAR(80);
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS priority VARCHAR(50) DEFAULT 'medium';
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS total_estimated_cost NUMERIC(14,2) DEFAULT 0;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS feasibility_summary TEXT;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS technical_scope TEXT;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS financial_analysis JSONB DEFAULT '{}'::jsonb;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS risks JSONB DEFAULT '[]'::jsonb;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS boq_items JSONB DEFAULT '[]'::jsonb;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS timeline JSONB DEFAULT '[]'::jsonb;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS cost_centers JSONB DEFAULT '[]'::jsonb;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS currency VARCHAR(20) DEFAULT 'ر.س';
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS project_description TEXT;
+
 
 CREATE TABLE IF NOT EXISTS boq_items (
   id SERIAL PRIMARY KEY,
@@ -146,6 +180,7 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 );
 
 CREATE INDEX IF NOT EXISTS idx_projects_status ON projects(status);
+CREATE INDEX IF NOT EXISTS idx_projects_created_date ON projects(created_date);
 CREATE INDEX IF NOT EXISTS idx_boq_project ON boq_items(project_id);
 CREATE INDEX IF NOT EXISTS idx_ledger_project_type ON ledger(project_id, transaction_type);
 CREATE INDEX IF NOT EXISTS idx_invoices_project ON invoices(project_id);
