@@ -42,24 +42,22 @@
     <section class="ai-overview" aria-labelledby="aiOverviewTitle">
       <div class="ai-overview__header">
         <div>
-          <p class="eyebrow">منصة الذكاء الاصطناعي لدراسة المشاريع والمقاولات</p>
+          <p id="aiPlatformName" class="eyebrow">منصة الذكاء الاصطناعي لدراسة المشاريع والمقاولات</p>
           <h2 id="aiOverviewTitle">نظرة عامة على المشروع</h2>
-          <p>
-            منصة مدعومة بالذكاء الاصطناعي لتحليل مشاريع المقاولات وإعداد دراسات الجدوى الاقتصادية والفنية تلقائيًا،
-            مع ربط دورة التطوير من التخطيط والبحث إلى الأتمتة وإدارة PMP ومراكز التكلفة.
-          </p>
+          <p id="aiPlatformDescription">سجّل الدخول لعرض خطة التنفيذ والمهام العاجلة ومراكز التكلفة.</p>
         </div>
-        <button class="spark-button" onclick="createProject()">✨ مشروع جديد بالذكاء الاصطناعي</button>
+        <button class="spark-button" onclick="createAiPlatformProject()">✨ إنشاء مشروع من خطة الذكاء الاصطناعي</button>
       </div>
       <div id="aiProjectStats" class="ai-stats"></div>
       <div class="ai-overview__grid">
         <article class="ai-card urgent-card">
           <h3>الحالة الحالية والأولويات</h3>
-          <p>
-            جميع المهام ما زالت في حالة <strong>لم تبدأ</strong> ولم يتم تعيينها لأعضاء الفريق بعد،
-            مع وجود مهام عاجلة تحتاج إلى بدء فوري لتثبيت نطاق المنصة وتقنيات الذكاء الاصطناعي ونموذج تحليل التكاليف.
-          </p>
+          <p id="aiPlatformStatus">سجّل الدخول لتحديث حالة المهام والأولويات من بيانات الخادم.</p>
           <ul id="urgentTasks" class="task-list"></ul>
+        </article>
+        <article class="ai-card">
+          <h3>مراكز التكلفة الرئيسية</h3>
+          <ul id="costCenters" class="cost-list"></ul>
         </article>
         <article class="ai-card">
           <h3>الميزات البارزة قيد التطوير</h3>

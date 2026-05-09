@@ -1,47 +1,60 @@
 let token = localStorage.getItem('erp_token') || '';
 let dashboardCache = null;
 
-const aiPlatformPlan = {
-  totalTasks: 31,
-  sections: 12,
-  notStarted: 31,
-  urgent: 13,
-  estimatedCost: 145000,
-  urgentTasks: [
-    { title: 'تحديد متطلبات المنصة والميزات الأساسية', dueDate: '2026-05-20' },
-    { title: 'بحث تقنيات الذكاء الاصطناعي المناسبة', dueDate: '2026-05-25' },
-    { title: 'تطوير نموذج الذكاء الاصطناعي لتحليل التكاليف', dueDate: '2026-07-15' },
-  ],
-  features: [
-    'تطوير محرك توليد المشاريع التلقائي',
-    'نظام التكامل بين الوحدات',
-    'توليد التقارير التلقائي',
-    'واجهة ضغطة زر واحدة لإنشاء المشروع بالكامل',
-  ],
-};
-
 function formatDate(value) {
+  if (!value) return 'غير محدد';
   return new Intl.DateTimeFormat('ar-EG', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(value));
 }
 
-function renderAiPlatformOverview() {
+function statusLabel(status) {
+  return {
+    not_started: 'لم تبدأ',
+    in_progress: 'قيد التنفيذ',
+    completed: 'مكتملة',
+    delayed: 'متأخرة',
+  }[status] || status || 'غير محدد';
+}
+
+function priorityLabel(priority) {
+  return { urgent: 'عاجلة', high: 'عالية', medium: 'متوسطة', low: 'منخفضة' }[priority] || priority || 'غير محددة';
+}
+
+function renderAiPlatformOverview(plan) {
+  if (!plan) return;
+
+  document.getElementById('aiPlatformName').textContent = plan.platformName;
+  document.getElementById('aiPlatformDescription').textContent = `${plan.description} مع ربط دورة التطوير من التخطيط والبحث إلى الأتمتة وإدارة PMP ومراكز التكلفة.`;
+  document.getElementById('aiPlatformStatus').innerHTML = `
+    جميع المهام الأساسية في حالة <strong>${plan.status}</strong>، مع ${plan.urgent} مهام عاجلة تحتاج إلى بدء فوري وتوزيع واضح للمسؤوليات.
+  `;
+
   const stats = [
-    ['إجمالي المهام', aiPlatformPlan.totalTasks],
-    ['الأقسام', aiPlatformPlan.sections],
-    ['لم تبدأ', aiPlatformPlan.notStarted],
-    ['مهام عاجلة', aiPlatformPlan.urgent],
-    ['التكلفة المقدرة', money(aiPlatformPlan.estimatedCost)],
+    ['إجمالي المهام', plan.totalTasks],
+    ['الأقسام', plan.sections],
+    ['لم تبدأ', plan.notStarted],
+    ['مهام عاجلة', plan.urgent],
+    ['التكلفة المقدرة', money(plan.estimatedCost)],
   ];
 
   document.getElementById('aiProjectStats').innerHTML = stats
     .map(([label, value]) => `<div class="ai-stat"><span>${label}</span><strong>${value}</strong></div>`)
     .join('');
 
-  document.getElementById('urgentTasks').innerHTML = aiPlatformPlan.urgentTasks
-    .map((task) => `<li><span>${task.title}</span><strong>استحقاق ${formatDate(task.dueDate)}</strong></li>`)
+  document.getElementById('urgentTasks').innerHTML = plan.urgentTasks
+    .map((task) => `
+      <li>
+        <span>${task.title}</span>
+        <small>${task.section} · ${priorityLabel(task.priority)} · ${statusLabel(task.status)}</small>
+        <strong>استحقاق ${formatDate(task.due_date)}</strong>
+      </li>
+    `)
     .join('');
 
-  document.getElementById('aiFeatures').innerHTML = aiPlatformPlan.features
+  document.getElementById('costCenters').innerHTML = plan.costCenters
+    .map((task) => `<li><span>${task.title}</span><strong>${money(task.estimated_cost)}</strong></li>`)
+    .join('');
+
+  document.getElementById('aiFeatures').innerHTML = plan.features
     .map((feature) => `<li>${feature}</li>`)
     .join('');
 }
@@ -123,6 +136,26 @@ async function loadDashboard() {
   renderProjects(dashboardCache.projects);
   renderCashFlow(dashboardCache.cashFlow);
   renderProfit(dashboardCache.kpis);
+  renderAiPlatformOverview(dashboardCache.aiPlan);
+}
+
+async function createAiPlatformProject() {
+  if (!token) {
+    alert('سجّل الدخول أولًا لإنشاء مشروع من خطة الذكاء الاصطناعي.');
+    return;
+  }
+
+  await api('/api/projects', {
+    method: 'POST',
+    body: JSON.stringify({
+      project_name: 'منصة الذكاء الاصطناعي لدراسة المشاريع والمقاولات',
+      client_name: 'مشروع داخلي',
+      contract_value: dashboardCache?.aiPlan?.estimatedCost || 145000,
+      start_date: '2026-05-20',
+      end_date: '2026-12-31',
+    }),
+  });
+  await loadDashboard();
 }
 
 async function createProject() {
@@ -139,7 +172,5 @@ async function createProject() {
   });
   await loadDashboard();
 }
-
-renderAiPlatformOverview();
 
 if (token) loadDashboard().catch(() => localStorage.removeItem('erp_token'));

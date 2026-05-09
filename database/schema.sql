@@ -135,6 +135,26 @@ CREATE TABLE IF NOT EXISTS ledger (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+
+CREATE TABLE IF NOT EXISTS ai_platform_tasks (
+  id SERIAL PRIMARY KEY,
+  section VARCHAR(120) NOT NULL,
+  title TEXT NOT NULL,
+  priority VARCHAR(20) NOT NULL DEFAULT 'medium' CHECK (priority IN ('urgent','high','medium','low')),
+  status VARCHAR(30) NOT NULL DEFAULT 'not_started' CHECK (status IN ('not_started','in_progress','completed','delayed')),
+  due_date DATE,
+  assignee VARCHAR(160),
+  estimated_cost NUMERIC(14,2) DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS ai_platform_features (
+  id SERIAL PRIMARY KEY,
+  feature_name TEXT NOT NULL,
+  sort_order INTEGER DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS audit_logs (
   id SERIAL PRIMARY KEY,
   user_id INTEGER REFERENCES users(id),
@@ -149,3 +169,5 @@ CREATE INDEX IF NOT EXISTS idx_projects_status ON projects(status);
 CREATE INDEX IF NOT EXISTS idx_boq_project ON boq_items(project_id);
 CREATE INDEX IF NOT EXISTS idx_ledger_project_type ON ledger(project_id, transaction_type);
 CREATE INDEX IF NOT EXISTS idx_invoices_project ON invoices(project_id);
+CREATE INDEX IF NOT EXISTS idx_ai_platform_tasks_priority ON ai_platform_tasks(priority);
+CREATE INDEX IF NOT EXISTS idx_ai_platform_tasks_status ON ai_platform_tasks(status);

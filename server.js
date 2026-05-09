@@ -43,6 +43,28 @@ const demoData = {
     { id: 1, transaction_type: 'revenue', description: 'دفعة مستخلص', amount: 250000, created_at: '2026-05-01' },
     { id: 2, transaction_type: 'expense', description: 'مواد بناء', amount: 95000, created_at: '2026-05-02' },
   ],
+  aiRoadmap: {
+    platformName: 'منصة الذكاء الاصطناعي لدراسة المشاريع والمقاولات',
+    description: 'منصة مدعومة بالذكاء الاصطناعي لتحليل مشاريع المقاولات وإعداد دراسات الجدوى الاقتصادية والفنية تلقائيًا.',
+    totalTasks: 31,
+    sections: 12,
+    status: 'لم تبدأ',
+  },
+  aiTasks: [
+    { id: 1, section: 'التخطيط', title: 'تحديد متطلبات المنصة والميزات الأساسية', priority: 'urgent', status: 'not_started', due_date: '2026-05-20', assignee: null, estimated_cost: 0 },
+    { id: 2, section: 'البحث', title: 'بحث تقنيات الذكاء الاصطناعي المناسبة', priority: 'urgent', status: 'not_started', due_date: '2026-05-25', assignee: null, estimated_cost: 0 },
+    { id: 3, section: 'النمذجة', title: 'تطوير نموذج الذكاء الاصطناعي لتحليل التكاليف', priority: 'urgent', status: 'not_started', due_date: '2026-07-15', assignee: null, estimated_cost: 50000 },
+    { id: 4, section: 'الأتمتة', title: 'أتمتة دراسات الجدوى الاقتصادية والفنية', priority: 'high', status: 'not_started', due_date: '2026-08-01', assignee: null, estimated_cost: 35000 },
+    { id: 5, section: 'المخاطر', title: 'تطوير وحدة تقييم المخاطر', priority: 'high', status: 'not_started', due_date: '2026-08-15', assignee: null, estimated_cost: 25000 },
+    { id: 6, section: 'البيانات', title: 'تصميم قاعدة بيانات المشاريع ومراكز التكلفة', priority: 'urgent', status: 'not_started', due_date: '2026-06-10', assignee: null, estimated_cost: 20000 },
+    { id: 7, section: 'تجربة المستخدم', title: 'تصميم واجهة المستخدم وتجربة ضغطة زر واحدة', priority: 'high', status: 'not_started', due_date: '2026-06-20', assignee: null, estimated_cost: 15000 },
+  ],
+  aiFeatures: [
+    'محرك توليد المشاريع التلقائي',
+    'نظام التكامل بين الوحدات',
+    'توليد التقارير التلقائي',
+    'واجهة ضغطة زر واحدة لإنشاء المشروع بالكامل',
+  ],
 };
 
 function auth(requiredRoles = []) {
@@ -67,6 +89,43 @@ async function dbQuery(sql, params = []) {
   return result.rows;
 }
 
+function buildAiPlan(tasks, features, roadmap = demoData.aiRoadmap) {
+  const notStarted = tasks.filter((task) => task.status === 'not_started').length;
+  const urgentTasks = tasks.filter((task) => task.priority === 'urgent');
+  const estimatedCost = tasks.reduce((sum, task) => sum + Number(task.estimated_cost || 0), 0);
+
+  return {
+    ...roadmap,
+    totalTasks: Number(roadmap.totalTasks || tasks.length),
+    sections: Number(roadmap.sections || new Set(tasks.map((task) => task.section)).size),
+    notStarted,
+    urgent: urgentTasks.length,
+    estimatedCost,
+    urgentTasks: urgentTasks.sort((a, b) => new Date(a.due_date) - new Date(b.due_date)).slice(0, 5),
+    costCenters: tasks
+      .filter((task) => Number(task.estimated_cost || 0) > 0)
+      .sort((a, b) => Number(b.estimated_cost || 0) - Number(a.estimated_cost || 0)),
+    features,
+  };
+}
+
+async function loadAiPlan() {
+  if (!process.env.DATABASE_URL) {
+    return buildAiPlan(demoData.aiTasks, demoData.aiFeatures);
+  }
+
+  const tasks = await dbQuery('SELECT * FROM ai_platform_tasks ORDER BY due_date ASC, id ASC');
+  const features = (await dbQuery('SELECT feature_name FROM ai_platform_features ORDER BY sort_order ASC, id ASC')).map((feature) => feature.feature_name);
+
+  return buildAiPlan(tasks, features, {
+    platformName: 'منصة الذكاء الاصطناعي لدراسة المشاريع والمقاولات',
+    description: 'منصة مدعومة بالذكاء الاصطناعي لتحليل مشاريع المقاولات وإعداد دراسات الجدوى الاقتصادية والفنية تلقائيًا.',
+    totalTasks: tasks.length,
+    sections: new Set(tasks.map((task) => task.section)).size,
+    status: tasks.some((task) => task.status !== 'not_started') ? 'قيد التنفيذ' : 'لم تبدأ',
+  });
+}
+
 app.get('/api/health', (req, res) => {
   res.json({ ok: true, system: 'Construction ERP', mode: process.env.DATABASE_URL ? 'database' : 'demo' });
 });
@@ -89,6 +148,7 @@ app.get('/api/dashboard', auth(), async (req, res) => {
   const projects = process.env.DATABASE_URL ? await dbQuery('SELECT * FROM projects ORDER BY id DESC') : demoData.projects;
   const invoices = process.env.DATABASE_URL ? await dbQuery('SELECT * FROM invoices ORDER BY id DESC') : demoData.invoices;
   const ledger = process.env.DATABASE_URL ? await dbQuery('SELECT * FROM ledger ORDER BY id DESC') : demoData.ledger;
+  const aiPlan = await loadAiPlan();
 
   const revenue = ledger.filter((x) => x.transaction_type === 'revenue').reduce((s, x) => s + Number(x.amount), 0);
   const expenses = ledger.filter((x) => x.transaction_type === 'expense').reduce((s, x) => s + Number(x.amount), 0);
@@ -108,6 +168,7 @@ app.get('/api/dashboard', auth(), async (req, res) => {
     projects,
     invoices,
     cashFlow: ledger,
+    aiPlan,
   });
 });
 
