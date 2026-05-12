@@ -39,6 +39,33 @@
       </div>
     </header>
 
+    <section class="ai-overview" aria-labelledby="aiOverviewTitle">
+      <div class="ai-overview__header">
+        <div>
+          <p id="aiPlatformName" class="eyebrow">منصة الذكاء الاصطناعي لدراسة المشاريع والمقاولات</p>
+          <h2 id="aiOverviewTitle">نظرة عامة على المشروع</h2>
+          <p id="aiPlatformDescription">سجّل الدخول لعرض خطة التنفيذ والمهام العاجلة ومراكز التكلفة.</p>
+        </div>
+        <button class="spark-button" onclick="createAiPlatformProject()">✨ إنشاء مشروع من خطة الذكاء الاصطناعي</button>
+      </div>
+      <div id="aiProjectStats" class="ai-stats"></div>
+      <div class="ai-overview__grid">
+        <article class="ai-card urgent-card">
+          <h3>الحالة الحالية والأولويات</h3>
+          <p id="aiPlatformStatus">سجّل الدخول لتحديث حالة المهام والأولويات من بيانات الخادم.</p>
+          <ul id="urgentTasks" class="task-list"></ul>
+        </article>
+        <article class="ai-card">
+          <h3>مراكز التكلفة الرئيسية</h3>
+          <ul id="costCenters" class="cost-list"></ul>
+        </article>
+        <article class="ai-card">
+          <h3>الميزات البارزة قيد التطوير</h3>
+          <ul id="aiFeatures" class="feature-list"></ul>
+        </article>
+      </div>
+    </section>
+
     <section id="kpis" class="kpis"></section>
 
     <section class="grid">
