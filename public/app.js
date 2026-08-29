@@ -1,6 +1,38 @@
 let token = localStorage.getItem('erp_token') || '';
 let dashboardCache = null;
 
+const fashionStudioProfile = {
+  suggestedIndicator: 'مركز إبداع لصناعة الأزياء والتطريز الحديث',
+  sector: 'النسيج والملابس',
+  projectType: 'وحدة إنتاجية مصغرة',
+  capital: 2000,
+  fixedAssets: 1700,
+  workingCapital: 300,
+  gracePeriod: '3 أشهر',
+  repaymentPeriod: '20 شهراً',
+  monthlyInstallment: 100,
+  totalRepayment: 2000,
+  targetProfitMargin: '25–35% صافي عند استقرار التشغيل',
+  directJobs: '2–4',
+  indirectJobs: '2–5',
+  capitalTurnover: 'عالية',
+  riskLevel: 'منخفض–متوسط',
+  collateral: 'المعدات + عقد التمويل + كفالة/ضمان اجتماعي حسب نظام الصندوق',
+  developmentSavings: '10% من صافي الأرباح',
+  targetMarket: 'صنعاء ثم المحافظات والأسواق الرقمية',
+  competitiveAdvantage: 'دمج التراث الصنعاني مع التصميم العصري',
+  nextSteps: [
+    'تجهيز هوية بصرية وكتالوج أولي للتصاميم الصنعانية الحديثة',
+    'توقيع عقود توريد خامات صغيرة لتقليل المخزون الراكد',
+    'إطلاق قناة بيع رقمية للطلبات حسب المقاس والمناسبات',
+  ],
+  monitoringIndicators: [
+    'عدد القطع المنتجة والمباعة شهرياً',
+    'نسبة الالتزام بالقسط الشهري خلال فترة السداد',
+    'قيمة الادخار التطويري المتراكمة من صافي الأرباح',
+  ],
+};
+
 async function api(path, options = {}) {
   const response = await fetch(path, {
     ...options,
@@ -72,12 +104,82 @@ function renderProfit(kpis) {
   `;
 }
 
+function percent(part, total) {
+  return total ? Math.round((Number(part || 0) / Number(total)) * 100) : 0;
+}
+
+function renderList(items) {
+  return items.map((item) => `<li>${item}</li>`).join('');
+}
+
+function renderFashionStudioProfile() {
+  const target = document.getElementById('fashionStudioProfile');
+  if (!target) return;
+
+  const fixedAssetsShare = percent(fashionStudioProfile.fixedAssets, fashionStudioProfile.capital);
+  const workingCapitalShare = percent(fashionStudioProfile.workingCapital, fashionStudioProfile.capital);
+  const financeItems = [
+    ['رأس المال/القرض', `$${money(fashionStudioProfile.capital)}`],
+    ['الأصول الثابتة', `$${money(fashionStudioProfile.fixedAssets)}`],
+    ['رأس المال التشغيلي', `$${money(fashionStudioProfile.workingCapital)}`],
+    ['القسط الشهري', `$${money(fashionStudioProfile.monthlyInstallment)}`],
+  ];
+  const detailItems = [
+    ['القطاع', fashionStudioProfile.sector],
+    ['نوع المشروع', fashionStudioProfile.projectType],
+    ['فترة السماح', fashionStudioProfile.gracePeriod],
+    ['مدة السداد', fashionStudioProfile.repaymentPeriod],
+    ['إجمالي السداد', `$${money(fashionStudioProfile.totalRepayment)}`],
+    ['هامش الربح المستهدف', fashionStudioProfile.targetProfitMargin],
+    ['الوظائف المباشرة', fashionStudioProfile.directJobs],
+    ['الوظائف غير المباشرة', fashionStudioProfile.indirectJobs],
+    ['سرعة دوران رأس المال', fashionStudioProfile.capitalTurnover],
+    ['مستوى المخاطر', fashionStudioProfile.riskLevel],
+    ['الضمان الأساسي', fashionStudioProfile.collateral],
+    ['نسبة الادخار التطويري', fashionStudioProfile.developmentSavings],
+    ['السوق المستهدف', fashionStudioProfile.targetMarket],
+    ['ميزة تنافسية', fashionStudioProfile.competitiveAdvantage],
+  ];
+
+  target.innerHTML = `
+    <div class="profile-hero">
+      <div>
+        <span class="eyebrow">المؤشر المقترح</span>
+        <h2>${fashionStudioProfile.suggestedIndicator}</h2>
+        <p>${fashionStudioProfile.competitiveAdvantage}</p>
+      </div>
+      <div class="risk-pill">${fashionStudioProfile.riskLevel}</div>
+    </div>
+    <div class="allocation" aria-label="توزيع رأس المال">
+      <span style="width:${fixedAssetsShare}%">الأصول ${fixedAssetsShare}%</span>
+      <span style="width:${workingCapitalShare}%">تشغيلي ${workingCapitalShare}%</span>
+    </div>
+    <div class="finance-strip">
+      ${financeItems.map(([label, value]) => `<div><span>${label}</span><strong>${value}</strong></div>`).join('')}
+    </div>
+    <div class="profile-grid">
+      ${detailItems.map(([label, value]) => `<div><span>${label}</span><strong>${value}</strong></div>`).join('')}
+    </div>
+    <div class="profile-actions">
+      <div>
+        <h3>خطوات التنفيذ المقترحة</h3>
+        <ul>${renderList(fashionStudioProfile.nextSteps)}</ul>
+      </div>
+      <div>
+        <h3>مؤشرات المتابعة</h3>
+        <ul>${renderList(fashionStudioProfile.monitoringIndicators)}</ul>
+      </div>
+    </div>
+  `;
+}
+
 async function loadDashboard() {
   dashboardCache = await api('/api/dashboard');
   renderKpis(dashboardCache.kpis);
   renderProjects(dashboardCache.projects);
   renderCashFlow(dashboardCache.cashFlow);
   renderProfit(dashboardCache.kpis);
+  renderFashionStudioProfile();
 }
 
 async function createProject() {
@@ -95,4 +197,5 @@ async function createProject() {
   await loadDashboard();
 }
 
+renderFashionStudioProfile();
 if (token) loadDashboard().catch(() => localStorage.removeItem('erp_token'));
